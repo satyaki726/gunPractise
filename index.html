@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Gun.js Chat App</title>
+</head>
+
+<body>
+    <h1>Gun.js Messaging App</h1>
+    <div id="messages"></div>
+    <input id="messageInput" type="text" placeholder="Type a message..." />
+    <button id="sendButton">Send</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/gun/gun.js"></script>
+    <script>
+        // Initialize Gun
+        const gun = Gun(['https://gun-manhattan.herokuapp.com/gun']); // Add your relay server or leave empty for P2P
+
+        // Create a reference to a chat room
+        const chat = gun.get('my-sat567u-room');
+        const username = prompt("Enter your name:");
+
+
+
+        // Display incoming messages
+        chat.map().on((message, id) => {
+
+            console.log(message)
+            var messageDiv = document.getElementById(id) || document.createElement('div');
+
+            if (!document.getElementById(id)) {
+                console.log(id)
+                messageDiv.id = id; // Set the ID of the new li element
+                messageDiv.textContent = `${message.username}: ${message.text}`;
+                document.getElementById('messages').appendChild(messageDiv);// Append it to the <ul>
+            }
+
+        });
+
+        // Send a message
+        document.getElementById('sendButton').addEventListener('click', () => {
+
+
+            const input = document.getElementById('messageInput');
+            const text = input.value;
+            input.value = '';
+
+            chat.set({
+                username: username, // Replace with dynamic usernames
+                text: text,
+                timestamp: Date.now()
+            });
+        });
+    </script>
+</body>
+
+</html>
